@@ -1,6 +1,6 @@
 import './ToDoList.scss'
 
-export default function ToDoList({items, onDone, onRemove, onClearCompleted}) {
+export default function ToDoList({items, onDone, onRemove, onClearCompleted, filter}) {
     return (
         <div className="todo__container">
             <ul className="todo">
@@ -18,16 +18,22 @@ export default function ToDoList({items, onDone, onRemove, onClearCompleted}) {
             <div className="item__actions">
                 <span className="item__count">
                 {
-                    items.filter(item => item.done === false).length ?
-                    `${items.filter(item => item.done === false).length} items left` :
-                    "All items completed!"
+                filter === "completed" ?
+                (items.filter(item => !item.done).length ? `${items.filter(item => !item.done).length} items left` : `${items.filter(item => item.done).length} items completed`) :
+                (filter === "all" ?
+                (items.length ? (items.every(item => item.done) ? "All items done!" : `${items.filter(item => !item.done).length} items left`) : "Add an item to the list") :
+                (items.length ? `${items.filter(item => !item.done).length} items left` : "No active tasks"))
                 }
                 </span>
 
-                <button className="item__clear" onClick={onClearCompleted}>
-                    Clear Completed
-                </button>
+                {
+                    items.filter(item => item.done).length > 0 &&
+                    <button className="item__clear" onClick={onClearCompleted}>
+                        Clear Completed
+                    </button>
+                }
+
             </div>
         </div>
-    )
+    );
 }

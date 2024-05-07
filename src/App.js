@@ -16,12 +16,14 @@ export default function App() {
     return savedItems ? JSON.parse(savedItems) : [];
   });
   const [filteredItems, setFilteredItems] = useState(toDoItems);
+  const [activeFilter, setActiveFilter] = useState('all');
 
   useEffect(() => {
     localStorage.setItem('darkMode', JSON.stringify(darkMode));
     localStorage.setItem('toDoItems', JSON.stringify(toDoItems));
     setFilteredItems(toDoItems);
-  }, [darkMode, toDoItems]);
+    handleFilter(activeFilter);
+  }, [darkMode, toDoItems, toDoItems, activeFilter]);
 
   function handleThemeToggle() {
     setDarkMode(theme => !theme)
@@ -39,7 +41,7 @@ export default function App() {
 
   function handleDone(itemId) {
     setToDoItems(toDoItems => {
-      return toDoItems.map(item => {
+      const updatedItems = toDoItems.map(item => {
         if (item.id === itemId) {
           return {
             ...item,
@@ -48,6 +50,9 @@ export default function App() {
         }
         return item;
       });
+  
+      handleFilter(activeFilter, updatedItems);
+      return updatedItems;
     });
   }
 
@@ -63,13 +68,15 @@ export default function App() {
     })
   }
 
-  function handleFilter(filter) {
+  function handleFilter(filter, items = toDoItems) {
+    setActiveFilter(filter);
+  
     if(filter === "active") {
-      setFilteredItems(toDoItems.filter(item => item.done === false))
+      setFilteredItems(items.filter(item => item.done === false))
     } else if (filter === "completed") {
-      setFilteredItems(toDoItems.filter(item => item.done === true))
+      setFilteredItems(items.filter(item => item.done === true))
     } else {
-      setFilteredItems(toDoItems)
+      setFilteredItems(items)
     }
   }
 
@@ -79,7 +86,7 @@ export default function App() {
       <ToDoHeader onThemeToggle={handleThemeToggle} darkMode={darkMode}/>
       <FormInput onSubmit={handleNewToDo}/>
       </header>
-      <ToDoList items={filteredItems} onDone={handleDone} onRemove={handleRemove} onClearCompleted={handleClearCompleted}/>
+      <ToDoList items={filteredItems} onDone={handleDone} onRemove={handleRemove} onClearCompleted={handleClearCompleted} filter={activeFilter}/>
       <ToDoActions onFilter={handleFilter}/>
     </div>
   );
