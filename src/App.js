@@ -23,7 +23,7 @@ export default function App() {
     localStorage.setItem('toDoItems', JSON.stringify(toDoItems));
     setFilteredItems(toDoItems);
     handleFilter(activeFilter);
-  }, [darkMode, toDoItems, toDoItems, activeFilter]);
+  }, [darkMode, toDoItems, activeFilter, handleFilter]);
 
   function handleThemeToggle() {
     setDarkMode(theme => !theme)
@@ -50,8 +50,6 @@ export default function App() {
         }
         return item;
       });
-  
-      handleFilter(activeFilter, updatedItems);
       return updatedItems;
     });
   }
