@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import './common.scss';
 
 import ToDoHeader from './components/ToDoHeader/ToDoHeader';
@@ -17,6 +17,18 @@ export default function App() {
   });
   const [filteredItems, setFilteredItems] = useState(toDoItems);
   const [activeFilter, setActiveFilter] = useState('all');
+
+  const handleFilter = useCallback((filter, items = toDoItems) => {
+    setActiveFilter(filter);
+
+    if(filter === "active") {
+      setFilteredItems(items.filter(item => item.done === false))
+    } else if (filter === "completed") {
+      setFilteredItems(items.filter(item => item.done === true))
+    } else {
+      setFilteredItems(items)
+    }
+  }, [toDoItems]);
 
   useEffect(() => {
     localStorage.setItem('darkMode', JSON.stringify(darkMode));
@@ -64,18 +76,6 @@ export default function App() {
     setToDoItems(toDoItems => {
       return toDoItems.filter(item => item.done === false);
     })
-  }
-
-  function handleFilter(filter, items = toDoItems) {
-    setActiveFilter(filter);
-  
-    if(filter === "active") {
-      setFilteredItems(items.filter(item => item.done === false))
-    } else if (filter === "completed") {
-      setFilteredItems(items.filter(item => item.done === true))
-    } else {
-      setFilteredItems(items)
-    }
   }
 
   return (
